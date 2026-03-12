@@ -1,0 +1,59 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git status)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git add*)",
+      "Bash(git commit*)",
+      "Bash(git checkout*)",
+      "Bash(git branch*)",
+      "Bash(npm run lint*)",
+      "Bash(npm run test*)",
+      "Bash(npm run build*)",
+      "Bash(cat *)",
+      "Bash(ls *)",
+      "Bash(find *)",
+      "Bash(mkdir *)",
+      "Read(*)",
+      "Edit(api/*)",
+      "Edit(src/*)",
+      "Edit(docs/*)",
+      "Edit(PROJECT_STATE.md)",
+      "Write(api/*)",
+      "Write(src/*)",
+      "Write(docs/*)",
+      "Write(PROJECT_STATE.md)"
+    ],
+    "deny": [
+      "Bash(rm -rf*)",
+      "Bash(git push*)",
+      "Bash(git reset --hard*)",
+      "Bash(npm install*)",
+      "Edit(.claude/*)",
+      "Edit(CLAUDE.md)",
+      "Write(.claude/*)",
+      "Write(CLAUDE.md)"
+    ]
+  },
+  "hooks": {
+    "Stop": [
+      {
+        "type": "command",
+        "command": "bash .claude/hooks/stop.sh"
+      }
+    ],
+    "PreToolUse": [
+      {
+        "type": "command",
+        "command": "bash .claude/hooks/pre-tool-use.sh"
+      }
+    ],
+    "PostToolUse": [
+      {
+        "type": "command",
+        "command": "bash .claude/hooks/config-change.sh"
+      }
+    ]
+  }
+}

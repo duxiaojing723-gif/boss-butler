@@ -4,13 +4,15 @@ export default {
   theme: {
     extend: {
       colors: {
-        surface: '#1C1C1E',
-        surface2: '#2C2C2E',
-        accent: '#FF6B35',
-        green: { app: '#30D158' },
+        surface: '#ffffff',
+        surface2: '#f2f2f7',
+        accent: '#007aff',
+        green: { app: '#34c759' },
+        orange: { app: '#ff9500' },
+        red: { app: '#ff3b30' },
       },
       fontFamily: {
-        sans: ['-apple-system', 'BlinkMacSystemFont', 'SF Pro Display', 'SF Pro Text', 'sans-serif'],
+        sans: ['Noto Sans SC', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
       },
     },
   },

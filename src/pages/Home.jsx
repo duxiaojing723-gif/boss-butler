@@ -2,18 +2,12 @@ import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import { fetchWeather } from '../lib/weather'
 import { useNavigate } from 'react-router-dom'
+import {
+  CatIcon, CheckIcon, ListIcon, NoteIcon, GlobeIcon, SparkleIcon,
+  MicIcon, ShirtIcon, UmbrellaIcon, MoonIcon, AlertIcon,
+} from '../components/Icons'
 
-const CAT = {
-  '待办':  { icon: '📌' },
-  '待回复': { icon: '📞' },
-  '新店':  { icon: '🏗️' },
-  '排班':  { icon: '👥' },
-  '进货':  { icon: '📦' },
-  '做账':  { icon: '💰' },
-  '异常':  { icon: '⚠️' },
-}
-
-const PBORDER = { high: '#FF3B30', medium: '#FF9F0A', low: '#30D158' }
+const PBORDER = { high: '#ff3b30', medium: '#ff9500', low: '#34c759' }
 
 function butlerMsg(hour, w, tasks) {
   const urgent = tasks.filter(t => t.priority === 'high').length
@@ -37,55 +31,33 @@ function butlerMsg(hour, w, tasks) {
 
 function WeatherCard({ w }) {
   return (
-    <div className="mx-6 mt-3 rounded-2xl p-4"
-      style={{ background: '#1C1C1E', border: '1px solid rgba(255,255,255,0.06)' }}>
+    <div className="rounded-[14px] p-4"
+      style={{ background: '#fff', boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
       <div className="flex items-center gap-3">
         <span className="text-4xl leading-none">{w.emoji}</span>
         <div>
-          <p className="text-[22px] font-bold leading-tight">
+          <p className="text-[22px] font-bold leading-tight text-[#1c1c1e]">
             {w.temp}°
-            <span className="text-[14px] font-normal ml-2" style={{ color: 'rgba(235,235,245,0.45)' }}>
+            <span className="text-[14px] font-normal ml-2 text-[#8e8e93]">
               体感 {w.feels}°
             </span>
           </p>
-          <p className="text-[13px]" style={{ color: 'rgba(235,235,245,0.45)' }}>{w.condition}</p>
+          <p className="text-[13px] text-[#8e8e93]">{w.condition}{w.city ? ` · ${w.city}` : ''}</p>
         </div>
       </div>
-      <p className="text-[13px] mt-3" style={{ color: 'rgba(235,235,245,0.75)' }}>
-        👔 {w.cloth}
+      <p className="text-[13px] mt-3 text-[#636366] flex items-center gap-1.5">
+        <ShirtIcon size={14} color="#636366" /> {w.cloth}
       </p>
       {w.rainAlert && (
-        <p className="text-[13px] mt-1.5" style={{ color: '#FF9F0A' }}>☂️ {w.rainAlert}</p>
+        <p className="text-[13px] mt-1.5 text-[#ff9500] flex items-center gap-1.5">
+          <UmbrellaIcon size={14} color="#ff9500" /> {w.rainAlert}
+        </p>
       )}
       {w.eveningAlert && (
-        <p className="text-[13px] mt-1.5" style={{ color: '#64D2FF' }}>🌙 {w.eveningAlert}</p>
+        <p className="text-[13px] mt-1.5 text-[#007aff] flex items-center gap-1.5">
+          <MoonIcon size={14} color="#007aff" /> {w.eveningAlert}
+        </p>
       )}
-    </div>
-  )
-}
-
-function TaskRow({ task, onDone }) {
-  const cat = CAT[task.category] || CAT['待办']
-  return (
-    <div className="flex items-center gap-3 rounded-2xl px-4 py-3.5"
-      style={{
-        background: '#1C1C1E',
-        border: '1px solid rgba(255,255,255,0.06)',
-        borderLeft: `3px solid ${PBORDER[task.priority] || '#FF9F0A'}`,
-      }}>
-      <span className="text-[20px] flex-shrink-0">{cat.icon}</span>
-      <p className="flex-1 text-[14px] leading-snug min-w-0" style={{
-        display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden'
-      }}>
-        {task.content}
-      </p>
-      <button
-        onClick={() => onDone(task.id)}
-        className="flex-shrink-0 text-[12px] font-semibold px-3 py-1.5 rounded-full active:opacity-50 transition-opacity ml-2"
-        style={{ background: 'rgba(48,209,88,0.15)', color: '#30D158' }}
-      >
-        完成
-      </button>
     </div>
   )
 }
@@ -129,90 +101,178 @@ export default function Home() {
   const anomaly = tasks.filter(t => t.category === '异常')
 
   return (
-    <div className="min-h-screen pb-52" style={{ background: '#000' }}>
+    <div className="min-h-screen pb-52" style={{ background: '#f2f2f7' }}>
 
-      {/* Date */}
-      <div className="px-6 pt-14 pb-0">
-        <p className="text-[13px]" style={{ color: 'rgba(235,235,245,0.35)' }}>{dateStr}</p>
+      {/* Header */}
+      <div className="px-4 pt-14 pb-0">
+        <h1 className="text-[1.5rem] font-bold text-[#1c1c1e] tracking-tight mb-1">单单的小助理</h1>
+        <p className="text-[13px] text-[#8e8e93]">{dateStr}</p>
+      </div>
+
+      {/* 摘要卡片 */}
+      <div className="px-4 mt-4">
+        <div className="grid grid-cols-3 gap-2.5">
+          <div className="bg-white rounded-[10px] py-3.5 text-center" style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
+            <p className="text-[1.5rem] font-bold text-[#007aff]">{openTasks.length}</p>
+            <p className="text-[0.75rem] text-[#8e8e93] mt-1">待办</p>
+          </div>
+          <div className="bg-white rounded-[10px] py-3.5 text-center" style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
+            <p className="text-[1.5rem] font-bold text-[#007aff]">{followTasks.length}</p>
+            <p className="text-[0.75rem] text-[#8e8e93] mt-1">待回复</p>
+          </div>
+          <div className="bg-white rounded-[10px] py-3.5 text-center" style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
+            <p className="text-[1.5rem] font-bold text-[#007aff]">{anomaly.length}</p>
+            <p className="text-[0.75rem] text-[#8e8e93] mt-1">异常</p>
+          </div>
+        </div>
+      </div>
+
+      {/* 语音输入卡 */}
+      <div className="px-4 mt-4">
+        <div className="bg-white rounded-[14px] p-4" style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
+          <div className="flex items-center gap-2 mb-3">
+            <span className="w-1 h-4 rounded-sm bg-[#007aff]" />
+            <span className="text-[0.9rem] font-semibold text-[#1c1c1e]">语音输入</span>
+          </div>
+          <button
+            onClick={() => navigate('/record')}
+            className="w-full flex items-center gap-3 rounded-[10px] px-4 py-3 active:scale-[0.98] transition-transform"
+            style={{ background: '#f2f2f7', border: '1px solid #e8e8ed' }}>
+            <span className="w-[52px] h-[52px] rounded-full flex items-center justify-center flex-shrink-0"
+              style={{ background: 'rgba(0,122,255,0.12)' }}>
+              <MicIcon size={24} color="#007aff" />
+            </span>
+            <span className="text-[0.9rem] text-[#8e8e93]">点击说话，或者输入文字...</span>
+          </button>
+        </div>
       </div>
 
       {/* 管家卡 */}
-      <div className="mx-6 mt-3 rounded-2xl p-4"
-        style={{ background: '#1C1C1E', borderLeft: '3px solid #FF6B35' }}>
-        <p className="text-[11px] font-semibold tracking-widest uppercase mb-1.5"
-          style={{ color: '#FF6B35' }}>管家</p>
-        <p className="text-[15px] leading-relaxed">
-          {loading ? '正在整理今天的安排...' : butlerMsg(hour, weather, tasks)}
-        </p>
+      <div className="px-4 mt-4">
+        <div className="rounded-[14px] p-4"
+          style={{ background: '#fff', boxShadow: '0 2px 12px rgba(0,0,0,0.06)', borderLeft: '3px solid #007aff' }}>
+          <p className="text-[11px] font-semibold tracking-widest uppercase mb-1.5 text-[#007aff]">管家</p>
+          <p className="text-[15px] leading-relaxed text-[#1c1c1e]">
+            {loading ? '正在整理今天的安排...' : butlerMsg(hour, weather, tasks)}
+          </p>
+        </div>
       </div>
 
       {/* 天气卡 */}
-      {weather && <WeatherCard w={weather} />}
-
-      {/* 异常警报 */}
-      {anomaly.length > 0 && (
-        <div className="mx-6 mt-3 rounded-2xl p-4"
-          style={{ background: 'rgba(255,59,48,0.08)', border: '1px solid rgba(255,59,48,0.25)' }}>
-          <p className="text-[11px] font-semibold tracking-widest uppercase mb-2"
-            style={{ color: '#FF3B30' }}>⚠️ 需要关注</p>
-          {anomaly.map(t => (
-            <div key={t.id} className="flex items-center gap-2">
-              <p className="text-[14px] flex-1">{t.content}</p>
-              <button onClick={() => markDone(t.id)} className="text-[12px] px-3 py-1 rounded-full active:opacity-50"
-                style={{ background: 'rgba(48,209,88,0.15)', color: '#30D158' }}>完成</button>
-            </div>
-          ))}
+      {weather && (
+        <div className="px-4 mt-3">
+          <WeatherCard w={weather} />
         </div>
       )}
 
-      {/* 今天先盯这3件 */}
-      {top3.length > 0 && (
-        <div className="mt-6 px-6">
-          <p className="text-[12px] font-semibold uppercase tracking-widest mb-3"
-            style={{ color: 'rgba(235,235,245,0.35)' }}>
-            今天先盯这 {top3.length} 件
-          </p>
-          <div className="space-y-2">
-            {top3.map(task => (
-              <TaskRow key={task.id} task={task} onDone={markDone} />
+      {/* 异常警报 */}
+      {anomaly.length > 0 && (
+        <div className="px-4 mt-3">
+          <div className="rounded-[14px] p-4"
+            style={{ background: 'rgba(255,59,48,0.06)', border: '1px solid rgba(255,59,48,0.2)' }}>
+            <p className="text-[11px] font-semibold tracking-widest uppercase mb-2 text-[#ff3b30] flex items-center gap-1.5">
+              <AlertIcon size={14} color="#ff3b30" /> 需要关注
+            </p>
+            {anomaly.map(t => (
+              <div key={t.id} className="flex items-center gap-2">
+                <p className="text-[14px] flex-1 text-[#1c1c1e]">{t.content}</p>
+                <button onClick={() => markDone(t.id)} className="text-[12px] px-3 py-1 rounded-full active:opacity-50"
+                  style={{ background: 'rgba(52,199,89,0.12)', color: '#34c759' }}>完成</button>
+              </div>
             ))}
           </div>
-          {openTasks.length > 3 && (
-            <button onClick={() => navigate('/tasks')}
-              className="mt-3 w-full py-3 rounded-2xl text-[13px] active:opacity-60"
-              style={{ background: '#1C1C1E', color: 'rgba(235,235,245,0.4)' }}>
-              还有 {openTasks.length - 3} 件 →
-            </button>
-          )}
+        </div>
+      )}
+
+      {/* 快捷操作 */}
+      <div className="px-4 mt-6">
+        <p className="text-[0.8rem] font-semibold text-[#636366] mb-3 pl-0.5">快捷操作</p>
+        <div className="grid grid-cols-2 gap-3">
+          <button onClick={() => navigate('/record')}
+            className="bg-white rounded-[14px] p-5 text-left active:scale-[0.98] transition-transform"
+            style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
+            <div className="w-10 h-10 rounded-[10px] flex items-center justify-center mb-3"
+              style={{ background: 'rgba(0,122,255,0.12)' }}>
+              <CheckIcon size={20} color="#007aff" />
+            </div>
+            <p className="text-[1rem] font-semibold text-[#1c1c1e]">新建任务</p>
+            <p className="text-[0.8rem] text-[#8e8e93] mt-1">记一笔待办，稍后处理</p>
+          </button>
+          <button onClick={() => navigate('/tasks')}
+            className="bg-white rounded-[14px] p-5 text-left active:scale-[0.98] transition-transform"
+            style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
+            <div className="w-10 h-10 rounded-[10px] flex items-center justify-center mb-3"
+              style={{ background: 'rgba(52,199,89,0.12)' }}>
+              <ListIcon size={20} color="#34c759" />
+            </div>
+            <p className="text-[1rem] font-semibold text-[#1c1c1e]">查看事项</p>
+            <p className="text-[0.8rem] text-[#8e8e93] mt-1">管理所有待办</p>
+          </button>
+          <button onClick={() => navigate('/record')}
+            className="bg-white rounded-[14px] p-5 text-left active:scale-[0.98] transition-transform"
+            style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
+            <div className="w-10 h-10 rounded-[10px] flex items-center justify-center mb-3"
+              style={{ background: 'rgba(255,149,0,0.12)' }}>
+              <NoteIcon size={20} color="#ff9500" />
+            </div>
+            <p className="text-[1rem] font-semibold text-[#1c1c1e]">记一笔</p>
+            <p className="text-[0.8rem] text-[#8e8e93] mt-1">快速记录想法</p>
+          </button>
+          <button onClick={() => navigate('/translate')}
+            className="bg-white rounded-[14px] p-5 text-left active:scale-[0.98] transition-transform"
+            style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
+            <div className="w-10 h-10 rounded-[10px] flex items-center justify-center mb-3"
+              style={{ background: 'rgba(255,59,48,0.12)' }}>
+              <GlobeIcon size={20} color="#ff3b30" />
+            </div>
+            <p className="text-[1rem] font-semibold text-[#1c1c1e]">翻译</p>
+            <p className="text-[0.8rem] text-[#8e8e93] mt-1">中英 / 中西互翻</p>
+          </button>
+        </div>
+      </div>
+
+      {/* 最近待办 */}
+      {top3.length > 0 && (
+        <div className="px-4 mt-6">
+          <div className="bg-white rounded-[14px] overflow-hidden" style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
+            <div className="flex items-center justify-between px-[18px] py-3.5" style={{ borderBottom: '1px solid #f0f0f0' }}>
+              <span className="text-[0.9rem] font-semibold text-[#1c1c1e]">最近待办</span>
+              <button onClick={() => navigate('/tasks')} className="text-[0.8rem] font-medium text-[#007aff]">查看全部</button>
+            </div>
+            <ul>
+              {top3.map((task, i) => (
+                <li key={task.id} className="flex items-center gap-3 px-[18px] py-3.5 cursor-pointer active:bg-[#f8f8f8] transition-colors"
+                  style={{ borderBottom: i < top3.length - 1 ? '1px solid #f5f5f5' : 'none' }}>
+                  <span className="w-2 h-2 rounded-full flex-shrink-0"
+                    style={{ background: PBORDER[task.priority] || '#8e8e93' }} />
+                  <span className="flex-1 text-[0.9rem] text-[#1c1c1e]">{task.content}</span>
+                  <button onClick={() => markDone(task.id)}
+                    className="text-[0.78rem] text-[#34c759] font-medium active:opacity-50">完成</button>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       )}
 
       {/* 等你回复 */}
       {followTasks.length > 0 && (
-        <div className="mt-6 px-6">
-          <p className="text-[12px] font-semibold uppercase tracking-widest mb-3"
-            style={{ color: 'rgba(235,235,245,0.35)' }}>等你回复</p>
-          <div className="space-y-2">
-            {followTasks.slice(0, 3).map(task => (
-              <div key={task.id} className="flex items-center gap-3 rounded-2xl px-4 py-3.5"
-                style={{
-                  background: '#1C1C1E',
-                  border: '1px solid rgba(255,159,10,0.2)',
-                  borderLeft: '3px solid #FF9F0A',
-                }}>
-                <span className="text-[20px]">📞</span>
-                <p className="flex-1 text-[14px] leading-snug min-w-0" style={{
-                  display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden'
-                }}>
-                  {task.content}
-                </p>
-                <button onClick={() => markDone(task.id)}
-                  className="flex-shrink-0 text-[12px] font-semibold px-3 py-1.5 rounded-full active:opacity-50 ml-2"
-                  style={{ background: 'rgba(48,209,88,0.15)', color: '#30D158' }}>
-                  完成
-                </button>
-              </div>
-            ))}
+        <div className="px-4 mt-4">
+          <div className="bg-white rounded-[14px] overflow-hidden" style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
+            <div className="flex items-center justify-between px-[18px] py-3.5" style={{ borderBottom: '1px solid #f0f0f0' }}>
+              <span className="text-[0.9rem] font-semibold text-[#1c1c1e]">等你回复</span>
+            </div>
+            <ul>
+              {followTasks.slice(0, 3).map((task, i) => (
+                <li key={task.id} className="flex items-center gap-3 px-[18px] py-3.5 active:bg-[#f8f8f8]"
+                  style={{ borderBottom: i < Math.min(followTasks.length, 3) - 1 ? '1px solid #f5f5f5' : 'none' }}>
+                  <span className="w-2 h-2 rounded-full flex-shrink-0 bg-[#ff9500]" />
+                  <span className="flex-1 text-[0.9rem] text-[#1c1c1e]">{task.content}</span>
+                  <button onClick={() => markDone(task.id)}
+                    className="text-[0.78rem] text-[#34c759] font-medium active:opacity-50">完成</button>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       )}
@@ -220,36 +280,15 @@ export default function Home() {
       {/* 空状态 */}
       {!loading && tasks.length === 0 && (
         <div className="text-center mt-16 px-6">
-          <p className="text-5xl mb-4">✨</p>
-          <p className="text-[17px] font-semibold">今天一件事都没有</p>
-          <p className="text-[14px] mt-1" style={{ color: 'rgba(235,235,245,0.4)' }}>
-            说一件事加进来吧
-          </p>
+          <div className="flex justify-center mb-4">
+            <SparkleIcon size={48} color="#007aff" />
+          </div>
+          <p className="text-[17px] font-semibold text-[#1c1c1e]">今天一件事都没有</p>
+          <p className="text-[14px] mt-1 text-[#8e8e93]">说一件事加进来吧</p>
         </div>
       )}
 
-      {/* 底部固定按钮 */}
-      <div className="fixed left-0 right-0 z-40" style={{ bottom: '66px' }}>
-        <div className="max-w-[430px] mx-auto px-5 space-y-2.5">
-          <button
-            onClick={() => navigate('/record')}
-            className="w-full py-4 rounded-2xl text-[17px] font-semibold tracking-tight active:scale-[0.97] transition-transform"
-            style={{
-              background: '#FF6B35',
-              boxShadow: '0 8px 32px rgba(255,107,53,0.45)',
-            }}
-          >
-            🎙️ 说一件事
-          </button>
-          <button
-            onClick={() => navigate('/translate')}
-            className="w-full py-3 rounded-2xl text-[15px] font-medium active:opacity-60"
-            style={{ background: '#1C1C1E', color: 'rgba(235,235,245,0.55)' }}
-          >
-            翻译一下
-          </button>
-        </div>
-      </div>
+      <p className="text-center text-[0.8rem] text-[#8e8e93] mt-8 pb-4">数据实时同步 · 单单的小助理</p>
     </div>
   )
 }

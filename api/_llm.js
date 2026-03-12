@@ -1,17 +1,11 @@
-// 共享 LLM 调用：主力千问 → 失败自动切 DeepSeek
+// 共享 LLM 调用：主力 OpenAI（美国用户）
 export async function chatCompletion(messages, options = {}) {
   const providers = [
     {
-      name: 'qwen',
-      baseURL: process.env.LLM_BASE_URL,
-      apiKey: process.env.LLM_API_KEY,
-      model: process.env.LLM_MODEL,
-    },
-    {
-      name: 'deepseek',
-      baseURL: process.env.LLM_FALLBACK_BASE_URL,
-      apiKey: process.env.LLM_FALLBACK_API_KEY,
-      model: process.env.LLM_FALLBACK_MODEL,
+      name: 'openai',
+      baseURL: process.env.LLM_BASE_URL || 'https://api.openai.com/v1',
+      apiKey: process.env.LLM_API_KEY || process.env.OPENAI_API_KEY,
+      model: process.env.LLM_MODEL || 'gpt-4o',
     },
   ]
 

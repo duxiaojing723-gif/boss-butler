@@ -1,17 +1,8 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
+import { CatIcon, EmptyBoxIcon, HouseIcon, CalendarIcon } from '../components/Icons'
 
-const CAT = {
-  '待办':  { icon: '📌' },
-  '待回复': { icon: '📞' },
-  '新店':  { icon: '🏗️' },
-  '排班':  { icon: '👥' },
-  '进货':  { icon: '📦' },
-  '做账':  { icon: '💰' },
-  '异常':  { icon: '⚠️' },
-}
-
-const PBORDER = { high: '#FF3B30', medium: '#FF9F0A', low: '#30D158' }
+const PBORDER = { high: '#ff3b30', medium: '#ff9500', low: '#34c759' }
 const STORE = { store1: '第一家', store2: '新店' }
 
 const STATUS_TABS = [
@@ -20,6 +11,8 @@ const STATUS_TABS = [
   { key: 'done', label: '已完成' },
   { key: 'all', label: '全部' },
 ]
+
+const CATEGORIES = ['待办', '待回复', '新店', '排班', '进货', '做账', '异常']
 
 export default function Tasks() {
   const [tasks, setTasks] = useState([])
@@ -54,26 +47,26 @@ export default function Tasks() {
     setTasks(prev => prev.filter(t => t.id !== id))
   }
 
-  const cats = ['全部', ...Object.keys(CAT)]
+  const cats = ['全部', ...CATEGORIES]
 
   return (
-    <div className="min-h-screen pb-28" style={{ background: '#000' }}>
+    <div className="min-h-screen pb-28" style={{ background: '#f2f2f7' }}>
 
       <div className="px-6 pt-14 pb-4">
-        <h1 className="text-[32px] font-bold tracking-tight">事项</h1>
+        <h1 className="text-[32px] font-bold tracking-tight" style={{ color: '#1c1c1e' }}>事项</h1>
       </div>
 
       {/* 状态 Tab */}
       <div className="px-6 mb-3">
-        <div className="flex p-1 rounded-xl" style={{ background: '#1C1C1E' }}>
+        <div className="flex p-1 rounded-xl" style={{ background: 'rgba(0,0,0,0.06)' }}>
           {STATUS_TABS.map(t => (
             <button key={t.key}
               onClick={() => setStatus(t.key)}
               className="flex-1 py-1.5 rounded-lg text-[12px] font-medium transition-all"
               style={{
-                background: status === t.key ? '#2C2C2E' : 'transparent',
-                color: status === t.key ? '#fff' : 'rgba(235,235,245,0.4)',
-                boxShadow: status === t.key ? '0 1px 4px rgba(0,0,0,0.4)' : 'none',
+                background: status === t.key ? '#fff' : 'transparent',
+                color: status === t.key ? '#1c1c1e' : '#8e8e93',
+                boxShadow: status === t.key ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
               }}>
               {t.label}
             </button>
@@ -86,13 +79,14 @@ export default function Tasks() {
         {cats.map(c => (
           <button key={c}
             onClick={() => setCatFilter(c)}
-            className="px-3 py-1.5 rounded-full text-[12px] font-medium whitespace-nowrap transition-all"
+            className="px-3 py-1.5 rounded-full text-[12px] font-medium whitespace-nowrap transition-all flex items-center gap-1"
             style={{
-              background: catFilter === c ? 'rgba(255,107,53,0.18)' : '#1C1C1E',
-              color: catFilter === c ? '#FF6B35' : 'rgba(235,235,245,0.45)',
-              border: catFilter === c ? '1px solid rgba(255,107,53,0.4)' : '1px solid transparent',
+              background: catFilter === c ? 'rgba(0,122,255,0.12)' : '#fff',
+              color: catFilter === c ? '#007aff' : '#8e8e93',
+              border: catFilter === c ? '1px solid rgba(0,122,255,0.3)' : '1px solid rgba(0,0,0,0.06)',
             }}>
-            {c !== '全部' && (CAT[c]?.icon + ' ')}{c}
+            {c !== '全部' && <CatIcon category={c} size={13} color={catFilter === c ? '#007aff' : '#8e8e93'} />}
+            {c}
           </button>
         ))}
       </div>
@@ -102,72 +96,75 @@ export default function Tasks() {
         {loading ? (
           <div className="space-y-3">
             {[1, 2, 3].map(i => (
-              <div key={i} className="rounded-2xl h-20 animate-pulse" style={{ background: '#1C1C1E' }} />
+              <div key={i} className="rounded-2xl h-20 animate-pulse" style={{ background: '#fff', boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }} />
             ))}
           </div>
         ) : tasks.length === 0 ? (
           <div className="text-center py-20">
-            <p className="text-5xl mb-3">📭</p>
-            <p className="text-[17px] font-semibold">这里没有事项</p>
+            <div className="flex justify-center mb-3">
+              <EmptyBoxIcon size={48} color="#8e8e93" />
+            </div>
+            <p className="text-[17px] font-semibold" style={{ color: '#1c1c1e' }}>这里没有事项</p>
           </div>
         ) : (
           <div className="space-y-3">
             {tasks.map(task => {
-              const cat = CAT[task.category] || CAT['待办']
               const isDone = task.status === 'done'
               return (
                 <div key={task.id} className="rounded-2xl overflow-hidden"
                   style={{
-                    background: '#1C1C1E',
-                    border: '1px solid rgba(255,255,255,0.06)',
-                    opacity: isDone ? 0.5 : 1,
+                    background: '#fff',
+                    boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
+                    opacity: isDone ? 0.55 : 1,
                   }}>
                   <div className="flex gap-3 p-4"
-                    style={{ borderLeft: `3px solid ${PBORDER[task.priority] || '#FF9F0A'}` }}>
-                    <span className="text-[18px] flex-shrink-0 mt-0.5">{cat.icon}</span>
+                    style={{ borderLeft: `3px solid ${PBORDER[task.priority] || '#ff9500'}` }}>
+                    <span className="flex-shrink-0 mt-0.5">
+                      <CatIcon category={task.category} size={18} color={isDone ? '#8e8e93' : '#636366'} />
+                    </span>
                     <div className="flex-1 min-w-0">
                       <p className="text-[14px] font-medium leading-snug"
                         style={{
                           textDecoration: isDone ? 'line-through' : 'none',
-                          color: isDone ? 'rgba(235,235,245,0.4)' : '#fff',
+                          color: isDone ? '#8e8e93' : '#1c1c1e',
                         }}>
                         {task.content}
                       </p>
-                      <div className="flex gap-2 mt-1.5 flex-wrap">
+                      <div className="flex gap-2 mt-1.5 flex-wrap items-center">
                         <span className="text-[11px] px-2 py-0.5 rounded-full"
-                          style={{ background: 'rgba(255,255,255,0.07)', color: 'rgba(235,235,245,0.45)' }}>
+                          style={{ background: '#f2f2f7', color: '#636366' }}>
                           {task.category || '待办'}
                         </span>
                         {task.store_id && (
-                          <span className="text-[11px]" style={{ color: 'rgba(235,235,245,0.4)' }}>
-                            🏠 {STORE[task.store_id]}
+                          <span className="text-[11px] flex items-center gap-0.5" style={{ color: '#8e8e93' }}>
+                            <HouseIcon size={12} color="#8e8e93" /> {STORE[task.store_id]}
                           </span>
                         )}
                         {task.due_date && (
-                          <span className="text-[11px]" style={{ color: 'rgba(235,235,245,0.4)' }}>
-                            📅 {task.due_date}
+                          <span className="text-[11px] flex items-center gap-0.5" style={{ color: '#8e8e93' }}>
+                            <CalendarIcon size={12} color="#8e8e93" /> {task.due_date}
                           </span>
                         )}
                       </div>
                     </div>
                   </div>
-                  <div className="flex" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+                  <div className="flex" style={{ borderTop: '1px solid rgba(0,0,0,0.06)' }}>
                     {!isDone ? (
                       <button onClick={() => markDone(task.id)}
                         className="flex-1 py-3 text-[13px] font-medium text-center active:opacity-50"
-                        style={{ color: '#30D158', borderRight: '1px solid rgba(255,255,255,0.06)' }}>
-                        完成 ✓
+                        style={{ color: '#34c759', borderRight: '1px solid rgba(0,0,0,0.06)' }}>
+                        完成
                       </button>
                     ) : (
                       <button onClick={() => reopen(task.id)}
                         className="flex-1 py-3 text-[13px] font-medium text-center active:opacity-50"
-                        style={{ color: 'rgba(235,235,245,0.45)', borderRight: '1px solid rgba(255,255,255,0.06)' }}>
+                        style={{ color: '#8e8e93', borderRight: '1px solid rgba(0,0,0,0.06)' }}>
                         重新打开
                       </button>
                     )}
                     <button onClick={() => del(task.id)}
                       className="px-6 py-3 text-[13px] font-medium active:opacity-50"
-                      style={{ color: '#FF3B30' }}>
+                      style={{ color: '#ff3b30' }}>
                       删除
                     </button>
                   </div>

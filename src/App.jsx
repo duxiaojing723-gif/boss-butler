@@ -5,18 +5,18 @@ import Tasks from './pages/Tasks'
 import Translate from './pages/Translate'
 
 function HomeIcon({ active }) {
-  const c = active ? '#FF6B35' : 'rgba(255,255,255,0.3)'
+  const c = active ? '#007aff' : '#8e8e93'
   return (
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
       <path d="M3 10L12 3L21 10V21H15V15H9V21H3V10Z"
-        fill={active ? 'rgba(255,107,53,0.2)' : 'none'}
+        fill={active ? 'rgba(0,122,255,0.12)' : 'none'}
         stroke={c} strokeWidth="1.7" strokeLinejoin="round" />
     </svg>
   )
 }
 
 function ListIcon({ active }) {
-  const c = active ? '#FF6B35' : 'rgba(255,255,255,0.3)'
+  const c = active ? '#007aff' : '#8e8e93'
   return (
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
       <rect x="3" y="5.5" width="18" height="2" rx="1" fill={c} />
@@ -27,7 +27,7 @@ function ListIcon({ active }) {
 }
 
 function GlobeIcon({ active }) {
-  const c = active ? '#FF6B35' : 'rgba(255,255,255,0.3)'
+  const c = active ? '#007aff' : '#8e8e93'
   return (
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
       <circle cx="12" cy="12" r="9.25" stroke={c} strokeWidth="1.5" />
@@ -52,13 +52,13 @@ function BottomNav() {
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50">
-      <div className="max-w-[430px] mx-auto">
+      <div className="max-w-[480px] mx-auto">
         <div className="flex border-t"
           style={{
-            background: 'rgba(0,0,0,0.88)',
+            background: 'rgba(242,242,247,0.92)',
             backdropFilter: 'blur(20px)',
             WebkitBackdropFilter: 'blur(20px)',
-            borderTopColor: 'rgba(255,255,255,0.08)',
+            borderTopColor: 'rgba(0,0,0,0.08)',
           }}>
           {tabs.map(({ path, label, Icon }) => {
             const active = location.pathname === path
@@ -68,14 +68,14 @@ function BottomNav() {
                 className="flex-1 flex flex-col items-center py-2.5 gap-0.5 active:opacity-60 transition-opacity">
                 <Icon active={active} />
                 <span className="text-[10px] font-medium tracking-wide"
-                  style={{ color: active ? '#FF6B35' : 'rgba(255,255,255,0.3)' }}>
+                  style={{ color: active ? '#007aff' : '#8e8e93' }}>
                   {label}
                 </span>
               </button>
             )
           })}
         </div>
-        <div style={{ background: 'rgba(0,0,0,0.88)', height: 'env(safe-area-inset-bottom, 0px)' }} />
+        <div style={{ background: 'rgba(242,242,247,0.92)', height: 'env(safe-area-inset-bottom, 0px)' }} />
       </div>
     </nav>
   )

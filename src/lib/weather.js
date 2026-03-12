@@ -21,21 +21,36 @@ function clothing(t) {
   return '短袖加防晒，多喝水'
 }
 
+// 默认 Bridgeport, CT（桥普林/布里奇波特）
+const DEFAULT_LOC = { lat: 41.18, lon: -73.19, city: 'Bridgeport, CT' }
+
 async function locate() {
   return new Promise((resolve) => {
-    if (!navigator.geolocation) return resolve({ lat: 29.76, lon: -95.37 })
+    if (!navigator.geolocation) return resolve(DEFAULT_LOC)
     navigator.geolocation.getCurrentPosition(
-      p => resolve({ lat: p.coords.latitude, lon: p.coords.longitude }),
-      () => resolve({ lat: 29.76, lon: -95.37 }), // 默认休斯顿，拒绝或超时直接用
+      p => resolve({ lat: p.coords.latitude, lon: p.coords.longitude, city: null }),
+      () => resolve(DEFAULT_LOC),
       { timeout: 4000, maximumAge: 600000 }
     )
   })
 }
 
 async function doFetch() {
-  const { lat, lon } = await locate()
+  const loc = await locate()
+  const { lat, lon } = loc
   const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&hourly=temperature_2m,apparent_temperature,precipitation_probability&timezone=auto&forecast_days=1`
   const data = await (await fetch(url)).json()
+
+  // 尝试反向地理编码获取城市名
+  let city = loc.city
+  if (!city) {
+    try {
+      const geo = await (await fetch(`https://geocoding-api.open-meteo.com/v1/search?latitude=${lat}&longitude=${lon}&count=1&format=json`)).json()
+      city = geo?.results?.[0]?.name || `${lat.toFixed(2)}, ${lon.toFixed(2)}`
+    } catch {
+      city = `${lat.toFixed(2)}, ${lon.toFixed(2)}`
+    }
+  }
 
   const h = new Date().getHours()
   const code = data.current_weather.weathercode
@@ -46,7 +61,7 @@ async function doFetch() {
   const [emoji, condition] = WMO[code] ?? ['🌡', '未知']
 
   return {
-    temp, feels, emoji, condition,
+    temp, feels, emoji, condition, city,
     cloth: clothing(feels),
     rainNow,
     rainEvening,
