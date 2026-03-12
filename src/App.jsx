@@ -1,8 +1,13 @@
-import { BrowserRouter, Routes, Route, useLocation, useNavigate } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom'
+import { isLoggedIn } from './lib/auth'
+import Login from './pages/Login'
 import Home from './pages/Home'
 import Record from './pages/Record'
 import Tasks from './pages/Tasks'
 import Translate from './pages/Translate'
+import Health from './pages/Health'
+import LogExercise from './pages/LogExercise'
+import LogMeal from './pages/LogMeal'
 
 function HomeIcon({ active }) {
   const c = active ? '#007aff' : '#8e8e93'
@@ -39,16 +44,29 @@ function GlobeIcon({ active }) {
   )
 }
 
+function HeartNavIcon({ active }) {
+  const c = active ? '#007aff' : '#8e8e93'
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z"
+        fill={active ? 'rgba(0,122,255,0.12)' : 'none'}
+        stroke={c} strokeWidth="1.7" strokeLinejoin="round" />
+    </svg>
+  )
+}
+
 const tabs = [
   { path: '/', label: '首页', Icon: HomeIcon },
   { path: '/tasks', label: '事项', Icon: ListIcon },
   { path: '/translate', label: '翻译', Icon: GlobeIcon },
+  { path: '/health', label: '健康', Icon: HeartNavIcon },
 ]
 
 function BottomNav() {
   const location = useLocation()
   const navigate = useNavigate()
-  if (location.pathname === '/record') return null
+  const hiddenPaths = ['/login', '/record', '/health/exercise', '/health/meal']
+  if (hiddenPaths.includes(location.pathname)) return null
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50">
@@ -60,16 +78,17 @@ function BottomNav() {
             WebkitBackdropFilter: 'blur(20px)',
             borderTopColor: 'rgba(0,0,0,0.08)',
           }}>
-          {tabs.map(({ path, label, Icon }) => {
-            const active = location.pathname === path
+          {tabs.map((tab) => {
+            const active = tab.path === '/' ? location.pathname === '/' : location.pathname.startsWith(tab.path)
+            const TabIcon = tab.Icon
             return (
-              <button key={path}
-                onClick={() => navigate(path)}
+              <button key={tab.path}
+                onClick={() => navigate(tab.path)}
                 className="flex-1 flex flex-col items-center py-2.5 gap-0.5 active:opacity-60 transition-opacity">
-                <Icon active={active} />
+                <TabIcon active={active} />
                 <span className="text-[10px] font-medium tracking-wide"
                   style={{ color: active ? '#007aff' : '#8e8e93' }}>
-                  {label}
+                  {tab.label}
                 </span>
               </button>
             )
@@ -81,14 +100,24 @@ function BottomNav() {
   )
 }
 
+function RequireAuth({ children }) {
+  const location = useLocation()
+  if (!isLoggedIn()) return <Navigate to="/login" state={{ from: location }} replace />
+  return children
+}
+
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/record" element={<Record />} />
-        <Route path="/tasks" element={<Tasks />} />
-        <Route path="/translate" element={<Translate />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/" element={<RequireAuth><Home /></RequireAuth>} />
+        <Route path="/record" element={<RequireAuth><Record /></RequireAuth>} />
+        <Route path="/tasks" element={<RequireAuth><Tasks /></RequireAuth>} />
+        <Route path="/translate" element={<RequireAuth><Translate /></RequireAuth>} />
+        <Route path="/health" element={<RequireAuth><Health /></RequireAuth>} />
+        <Route path="/health/exercise" element={<RequireAuth><LogExercise /></RequireAuth>} />
+        <Route path="/health/meal" element={<RequireAuth><LogMeal /></RequireAuth>} />
       </Routes>
       <BottomNav />
     </BrowserRouter>

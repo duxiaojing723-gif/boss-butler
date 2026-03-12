@@ -257,6 +257,45 @@ export function MicIcon({ size = 40, color = '#fff', className }) {
   )
 }
 
+// 心 — 健康导航
+export function HeartIcon({ size, color, className }) {
+  return (
+    <I size={size} color={color} className={className}>
+      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z" />
+    </I>
+  )
+}
+
+// 跑步 — 记运动
+export function RunIcon({ size, color, className }) {
+  return (
+    <I size={size} color={color} className={className}>
+      <circle cx="13" cy="4" r="2" />
+      <path d="M7 21l3-7 2.5 2V21" />
+      <path d="M16 21l-2-5-3.5-1-1.5-4 4-2 3 3 3 1" />
+    </I>
+  )
+}
+
+// 相机 — 拍一餐
+export function CameraIcon({ size, color, className }) {
+  return (
+    <I size={size} color={color} className={className}>
+      <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+      <circle cx="12" cy="13" r="4" />
+    </I>
+  )
+}
+
+// 火焰 — 卡路里
+export function FlameIcon({ size, color, className }) {
+  return (
+    <I size={size} color={color} className={className}>
+      <path d="M12 22c-4.97 0-7-3.58-7-7 0-4 3-7.5 4-10.5 1 3.5 3 5 5 7 0-2.5-.5-5-1-7.5C16 7 19 11 19 15c0 3.42-2.03 7-7 7z" />
+    </I>
+  )
+}
+
 // 分类图标映射 — 返回 JSX 组件
 const CAT_ICONS = {
   '待办': PinIcon,

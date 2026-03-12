@@ -15,6 +15,8 @@ const apiModules = {
   '/api/translate': () => import('./api/translate.js'),
   '/api/voice': () => import('./api/voice.js'),
   '/api/transcribe': () => import('./api/transcribe.js'),
+  '/api/analyze-food': () => import('./api/analyze-food.js'),
+  '/api/estimate-exercise': () => import('./api/estimate-exercise.js'),
 }
 
 for (const [path, loader] of Object.entries(apiModules)) {

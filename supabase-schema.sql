@@ -46,3 +46,38 @@ alter table translations enable row level security;
 create policy "Allow all" on stores for all using (true);
 create policy "Allow all" on tasks for all using (true);
 create policy "Allow all" on translations for all using (true);
+
+-- Exercises (运动记录)
+create table exercises (
+  id uuid default gen_random_uuid() primary key,
+  type text not null,
+  duration_min integer not null,
+  calories_burned integer not null,
+  note text,
+  source text default 'manual',
+  logged_at date default current_date,
+  created_at timestamptz default now()
+);
+
+-- Meals (饮食记录)
+create table meals (
+  id uuid default gen_random_uuid() primary key,
+  name text not null,
+  photo_url text,
+  portion text,
+  calories integer not null,
+  protein_g numeric(6,1),
+  carbs_g numeric(6,1),
+  fat_g numeric(6,1),
+  meal_type text default '其他',
+  ai_raw jsonb,
+  source text default 'photo',
+  logged_at date default current_date,
+  created_at timestamptz default now()
+);
+
+alter table exercises enable row level security;
+alter table meals enable row level security;
+
+create policy "Allow all" on exercises for all using (true);
+create policy "Allow all" on meals for all using (true);

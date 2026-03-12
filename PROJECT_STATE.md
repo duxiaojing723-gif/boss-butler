@@ -10,7 +10,7 @@
 - **项目名**：boss-butler
 - **阶段**：Alpha
 - **最后更新**：2026-03-12
-- **最后 task**：（初始化）
+- **最后 task**：health-module
 
 ---
 
@@ -34,9 +34,11 @@
   - `transcribe.js`：语音转文字
   - `translate.js`：翻译功能
   - `voice.js`：语音合成
+  - `analyze-food.js`：食物照片 AI 识别（GPT-4o Vision）
+  - `estimate-exercise.js`：运动热量 MET 公式估算
 - `src/`：React 前端
-  - `src/lib/`：前端共享逻辑
-  - `src/pages/`：页面组件
+  - `src/lib/`：前端共享逻辑（含 `health.js` 健康模块）
+  - `src/pages/`：页面组件（含 Health/LogExercise/LogMeal）
 
 ### 技术债登记
 
@@ -67,11 +69,9 @@
 
 ## ADR 索引
 
-（初始为空，每次新增 ADR 在此登记）
-<!--
 | ID | 标题 | 状态 | 日期 |
 |----|------|------|------|
--->
+| ADR-001 | 健康助理模块架构 | 已接受 | 2026-03-12 |
 
 ---
 
